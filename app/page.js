@@ -1,5 +1,12 @@
 'use client';
 
+
+/* igram se z env */
+require('dotenv').config();
+console.log(process.env.NEXT_PUBLIC_DB_USERNAME)
+console.log(process.env.NEXT_PUBLIC_DB_PASS)
+
+
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
