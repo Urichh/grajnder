@@ -9,10 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "connect": "^3.7.0",
     "dotenv": "^16.4.7",
+    "events": "^3.3.0",
+    "mysql2": "^3.11.5",
+    "net": "^1.0.2",
     "next": "15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "timers": "^0.1.1",
+    "tls": "^0.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
