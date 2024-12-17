@@ -12,6 +12,7 @@ body {
   min-height: 100vh;
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden; /* ce mamo one page dizaj lahk to ostane sicer bujs da spremenimo sam preventa da scroll bari odbstajajo */
 }
 
 .hearts-container {
