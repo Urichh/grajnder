@@ -73,7 +73,10 @@ export default function HomePage() {
                 <h2>Vnesite svoje osebne podatke</h2>
                 <input type='text' className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Ime'></input>
                 <input type='text' className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Priimek'></input>
-                <input type='text' className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Starost'></input>
+                <input type='text' 
+                    onFocus={(e) => (e.target.type = "date")} 
+                    onBlur={(e) => ( e.target.type = e.target.value == "" ? "text" : "date")}                  
+                    className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Datum rojstva'></input>
                 <input type='text' className='pt-4 mx-10 mb-3 focus:outline-none border-b border-indigo-300' placeholder='Spol'></input>
                 
                 <button 

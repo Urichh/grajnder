@@ -8,8 +8,34 @@ export default function HomePage() {
   const [users, setUsers] = useState([]);
   const router = useRouter();
 
-  const handleConfirmLogin = () => {
-    router.push('/login');
+  const handleConfirmLogin = async (event) => {
+    event.preventDefault();
+    
+    const formData = {
+      action: "login",
+      username: event.target[0].value,
+      password: event.target[1].value,
+    };
+  
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        router.push('/');
+      } else {
+        const data = await response.json();
+        alert(`Error: ${data}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An unexpected error occurred.');
+    }
   };
 
   const handleGoToRegPage = () => {
