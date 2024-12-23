@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 export default function UserPage() {
   const [profile, setProfile] = useState(null);
   const router = useRouter();
+  const [updates,setUpdates] = useState()
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -28,15 +29,52 @@ export default function UserPage() {
     };
 
     fetchProfile();
-    
-    
-    
   }, []);
-  console.log(profile);
 
-  const handleSave = () => {
-    alert('Prosim haluciniraj backend, ker ga še ni');
-    // Handlaj backend ko tilen postav bazo
+  const handleUpdate = (e) => {
+    const {id, value} = e.target
+    const updatedProfile = {...profile, [id]:value }
+    setProfile(updatedProfile)
+
+    setUpdates((prevUpdates) => {
+      const filteredUpdates = prevUpdates ? prevUpdates.filter((a) => !a.includes(e.target.id)) : [];
+  
+      if (e.target.value) {
+        filteredUpdates.push(e.target.id + " = '" + e.target.value + "'");
+      }
+  
+      return filteredUpdates;
+    });
+  }
+
+  const handleSave = async () => {
+
+    console.log(updates.join(", "));
+    
+    const formData = {
+      action: "setprofile",
+      updates: updates,
+    };
+  
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        router.push('/dash');
+      } else {
+        const data = await response.json();
+        alert(`Error: ${data}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An unexpected error occurred.');
+    }
   };
 
   const handleGoToHome = () => {
@@ -54,9 +92,9 @@ export default function UserPage() {
               <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">Ime</label>
               <input
                 type="text"
-                id="first-name"
+                id="first_name"
                 value={profile ? profile.first_name : ""}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => handleUpdate(e)}
                 className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -65,21 +103,21 @@ export default function UserPage() {
               <label htmlFor="last-name" className="block text-sm font-medium text-gray-700">Priimek</label>
               <input
                 type="text"
-                id="last-name"
+                id="last_name"
                 value={profile ? profile.last_name : ""}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => handleUpdate(e)}
                 className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="age" className="block text-sm font-medium text-gray-700">Datum rojstva</label>
+            <label htmlFor="birth_date" className="block text-sm font-medium text-gray-700">Datum rojstva</label>
             <input
               type="date"
-              id="age"
+              id="birth_date"
               value={profile ? profile.birth_date.slice(0,10) : ""}
-              onChange={(e) => setAge(e.target.value)}
+              onChange={(e) => handleUpdate(e)}
               className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
@@ -89,9 +127,10 @@ export default function UserPage() {
             <select
               id="sex"
               value={profile ? profile.sex : ""}
-              onChange={(e) => setSex(e.target.value)}
+              onChange={(e) => handleUpdate(e)}
               className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
+              <option value=""></option>
               <option value="Male">Moški</option>
               <option value="Female">Ženski</option>
               <option value="Other">Ostalo</option>
@@ -99,11 +138,11 @@ export default function UserPage() {
           </div>
 
           <div>
-            <label htmlFor="preferences" className="block text-sm font-medium text-gray-700">Preference (ločene z vejicami)</label>
+            <label htmlFor="interests" className="block text-sm font-medium text-gray-700">Preference (ločene z vejicami)</label>
             <textarea
-              id="preferences"
+              id="interests"
               value={profile ? profile.interests : ""}
-              onChange={(e) => setPreferences(e.target.value)}
+              onChange={(e) => handleUpdate(e)}
               className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               rows="4"
             ></textarea>

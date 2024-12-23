@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 export async function POST(request) {
   try {
-    const { action, username, password, email, firstName, lastName, age, sex } = await request.json();
+    const { action, username, password, email, firstName, lastName, age, sex, updates } = await request.json();
 
     const conn = await mysql.createConnection({
       host: 'tileng.si',
@@ -58,6 +58,20 @@ export async function POST(request) {
 
     } else if (action === 'getprofile'){
       const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, birth_date FROM users WHERE id = ?`;
+
+      const [rows] = await conn.execute(query,[process.env.USER_ID]);
+
+      if (rows.length === 0) {
+        return new Response(JSON.stringify('Error executing query'), { status: 401 });
+      }
+
+      await conn.end();
+      return new Response(JSON.stringify(rows[0]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } else if (action === 'setprofile'){
+      const query = "UPDATE users SET " + updates.join(", ") + " WHERE id = ?";
 
       const [rows] = await conn.execute(query,[process.env.USER_ID]);
 
