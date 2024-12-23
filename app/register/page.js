@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function HomePage() {
-  const [users, setUsers] = useState([]);
   const router = useRouter();
 
   const handleRegister = async (event) => {

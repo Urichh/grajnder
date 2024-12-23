@@ -51,7 +51,7 @@ const SwipePage = () => {
   };
 
   const handleGoToHome = () => {
-    router.push('/');
+    router.push('/dash');
   };
 
   const profile = users[currentIndex];

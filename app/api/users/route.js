@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 export async function POST(request) {
   try {
     const { action, username, password, email, firstName, lastName, age, sex } = await request.json();
-    
+
     const conn = await mysql.createConnection({
       host: 'tileng.si',
       port: 3306,
@@ -37,12 +37,14 @@ export async function POST(request) {
       if (!passwordMatch) {
         return new Response(JSON.stringify('Invalid username or password'), { status: 401 });
       }
-
+      process.env.USER_ID = user.id
+      
       await conn.end();
       return new Response(JSON.stringify('Login successful'), { status: 200 });
+
     } else if (action === 'getusers'){
-      const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age FROM users`;
-      const [rows] = await conn.execute(query);
+      const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age FROM users WHERE id != ?`;
+      const [rows] = await conn.execute(query, [process.env.USER_ID]);
 
       if (rows.length === 0) {
         return new Response(JSON.stringify('Error executing query'), { status: 401 });
@@ -50,6 +52,21 @@ export async function POST(request) {
 
       await conn.end();
       return new Response(JSON.stringify(rows), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+    } else if (action === 'getprofile'){
+      const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, birth_date FROM users WHERE id = ?`;
+
+      const [rows] = await conn.execute(query,[process.env.USER_ID]);
+
+      if (rows.length === 0) {
+        return new Response(JSON.stringify('Error executing query'), { status: 401 });
+      }
+
+      await conn.end();
+      return new Response(JSON.stringify(rows[0]), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });

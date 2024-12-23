@@ -1,24 +1,46 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function UserPage() {
+  const [profile, setProfile] = useState(null);
   const router = useRouter();
 
-  const handleGoToHome = () => {
-    router.push('/');
-  };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({action: "getprofile"}),
+      });
 
-  const [firstName, setFirstName] = useState('Damjan');
-  const [lastName, setLastName] = useState('Fujs');
-  const [age, setAge] = useState(28);
-  const [sex, setSex] = useState('Male');
-  const [preferences, setPreferences] = useState('Poučevanje, ocenjevanje, bit živa legenda, sovražtvo fiat multiple');
+      if (response.ok) {
+        const data = await response.json();
+        setProfile(data);
+        
+        
+      } else {
+        console.error('Failed to fetch profile');
+      }
+    };
+
+    fetchProfile();
+    
+    
+    
+  }, []);
+  console.log(profile);
 
   const handleSave = () => {
     alert('Prosim haluciniraj backend, ker ga še ni');
     // Handlaj backend ko tilen postav bazo
+  };
+
+  const handleGoToHome = () => {
+    router.push('/dash');
   };
 
   return (
@@ -33,7 +55,7 @@ export default function UserPage() {
               <input
                 type="text"
                 id="first-name"
-                value={firstName}
+                value={profile ? profile.first_name : ""}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -44,7 +66,7 @@ export default function UserPage() {
               <input
                 type="text"
                 id="last-name"
-                value={lastName}
+                value={profile ? profile.last_name : ""}
                 onChange={(e) => setLastName(e.target.value)}
                 className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -52,11 +74,11 @@ export default function UserPage() {
           </div>
 
           <div>
-            <label htmlFor="age" className="block text-sm font-medium text-gray-700">Starost</label>
+            <label htmlFor="age" className="block text-sm font-medium text-gray-700">Datum rojstva</label>
             <input
-              type="number"
+              type="date"
               id="age"
-              value={age}
+              value={profile ? profile.birth_date.slice(0,10) : ""}
               onChange={(e) => setAge(e.target.value)}
               className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -66,7 +88,7 @@ export default function UserPage() {
             <label htmlFor="sex" className="block text-sm font-medium text-gray-700">Spol</label>
             <select
               id="sex"
-              value={sex}
+              value={profile ? profile.sex : ""}
               onChange={(e) => setSex(e.target.value)}
               className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
@@ -80,7 +102,7 @@ export default function UserPage() {
             <label htmlFor="preferences" className="block text-sm font-medium text-gray-700">Preference (ločene z vejicami)</label>
             <textarea
               id="preferences"
-              value={preferences}
+              value={profile ? profile.interests : ""}
               onChange={(e) => setPreferences(e.target.value)}
               className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               rows="4"

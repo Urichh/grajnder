@@ -1,19 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function HomePage() {
-  const [users, setUsers] = useState([]);
   const router = useRouter();
 
-  const handleGoToLoginPage = () => {
-    router.push('/login');
+  const handleGoToUserPage = () => {
+    router.push('/user');
   };
 
-  const handleGoToRegPage = () => {
-    router.push('/register');
+  const handleGoToSwipePage = () => {
+    router.push('/swipe');
   };
 
   return (
@@ -33,18 +31,19 @@ export default function HomePage() {
 
         <div className="space-y-4 text-center">
           <button
-            onClick={handleGoToLoginPage}
-            className="px-10 py-2 mb-3 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            Vpis
+            onClick={handleGoToUserPage}
+            className="px-6 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            Profil
           </button>
           <br />
-          <a
-            onClick={handleGoToRegPage}
-            className="px-6 py-1 underline text-sm text-indigo-600 hover: text-indigo-700">
-            Ustvari račun
-          </a>
+          <button
+            onClick={handleGoToSwipePage}
+            className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            Swipaj
+          </button>
         </div>
       </div>
     </div>
   );
 }
+

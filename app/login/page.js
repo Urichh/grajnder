@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function HomePage() {
-  const [users, setUsers] = useState([]);
   const router = useRouter();
 
   const handleConfirmLogin = async (event) => {
@@ -21,13 +19,13 @@ export default function HomePage() {
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
   
       if (response.ok) {
-        router.push('/');
+        router.push('/dash');
       } else {
         const data = await response.json();
         alert(`Error: ${data}`);
