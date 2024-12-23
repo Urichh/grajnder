@@ -17,7 +17,7 @@ export async function POST(request) {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const query = `
-        INSERT INTO users (email, nickname, first_name, last_name, age, sex, password)
+        INSERT INTO users (email, nickname, first_name, last_name, birth_date, sex, password)
         VALUES (?, ?, ?, ?, ?, ?, ?);
       `;
       await conn.execute(query, [email, username, firstName, lastName, age, sex, hashedPassword]);
@@ -41,7 +41,7 @@ export async function POST(request) {
       await conn.end();
       return new Response(JSON.stringify('Login successful'), { status: 200 });
     } else if (action === 'getusers'){
-      const query = `SELECT * FROM users`;
+      const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age FROM users`;
       const [rows] = await conn.execute(query);
 
       if (rows.length === 0) {
