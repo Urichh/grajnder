@@ -2,13 +2,16 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useState } from 'react';
 
 export default function HomePage() {
   const router = useRouter();
+  const [usernameError, setUsernameError] = useState(''); // State to store username error
+
 
   const handleRegister = async (event) => {
     event.preventDefault();
-    
+
     const formData = {
       action: "register",
       username: event.target[0].value,
@@ -17,9 +20,9 @@ export default function HomePage() {
       firstName: event.target[3].value,
       lastName: event.target[4].value,
       age: event.target[5].value,
-      sex: event.target[6].value,
+      sex: event.target.gender.value,
     };
-  
+
     try {
       const response = await fetch('/api/users', {
         method: 'POST',
@@ -28,7 +31,7 @@ export default function HomePage() {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         alert('User registered successfully!');
         router.push('/login');
@@ -40,10 +43,6 @@ export default function HomePage() {
       console.error(error);
       alert('An unexpected error occurred.');
     }
-  };
-
-  const handleGoToLoginPage = () => {
-    router.push('/login');
   };
 
   return (
@@ -62,30 +61,85 @@ export default function HomePage() {
         </div>
 
         <div className="space-y-4 text-center">
-          <form onSubmit={handleRegister} className='grid'>
-                <h2>Vnesite podatke za prijavo</h2>
-                <input type='text' className='pt-2 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Uporabniško ime'></input>
-                <input type='email' className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Email'></input>
-                <input type='password' className='pt-4 mx-10 mb-8 focus:outline-none border-b border-indigo-300' placeholder='Geslo'></input>
+          <form onSubmit={handleRegister} className="grid">
+            <h2>Vnesite podatke za prijavo</h2>
+            <input
+              type="text"
+              className="pt-2 mx-10 mb-1 focus:outline-none border-b border-indigo-300"
+              placeholder="Uporabniško ime"
+            />
+            <input
+              type="email"
+              className="pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300"
+              placeholder="Email"
+            />
+            <input
+              type="password"
+              className="pt-4 mx-10 mb-8 focus:outline-none border-b border-indigo-300"
+              placeholder="Geslo"
+            />
 
-                <h2>Vnesite svoje osebne podatke</h2>
-                <input type='text' className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Ime'></input>
-                <input type='text' className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Priimek'></input>
-                <input type='text' 
-                    onFocus={(e) => (e.target.type = "date")} 
-                    onBlur={(e) => ( e.target.type = e.target.value == "" ? "text" : "date")}                  
-                    className='pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300' placeholder='Datum rojstva'></input>
-                <input type='text' className='pt-4 mx-10 mb-3 focus:outline-none border-b border-indigo-300' placeholder='Spol'></input>
-                
-                <button 
-                type='submit'  
-                className="py-2 px-10 mt-4 mb-5 max-w-44 mx-auto text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 ">
-                    Ustvari račun
-                </button>
+            <h2>Vnesite svoje osebne podatke</h2>
+            <input
+              type="text"
+              className="pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300"
+              placeholder="Ime"
+            />
+            <input
+              type="text"
+              className="pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300"
+              placeholder="Priimek"
+            />
+            <input
+              type="date"
+              min="1900-01-01"
+              className="pt-4 mx-10 mb-1 focus:outline-none border-b border-indigo-300"
+              placeholder="Datum rojstva"
+            />
+            <div className="flex items-center mx-10 mb-3">
+              <h2 className="pr-4">Spol:</h2>
+              <div className="flex space-x-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Male"
+                    className="form-radio text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span>Moški</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Female"
+                    className="form-radio text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span>Ženska</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value=""
+                    className="form-radio text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span>Ostalo</span>
+                </label>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="py-2 px-10 mt-4 mb-5 max-w-44 mx-auto text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Ustvari račun
+            </button>
           </form>
           <a
-            onClick={handleGoToLoginPage}
-            className="px-6 py-1 underline text-sm text-indigo-600 hover:text-indigo-700">
+            onClick={() => router.push('/login')}
+            className="px-6 py-1 underline text-sm text-indigo-600 hover:text-indigo-700"
+          >
             Vpiši se
           </a>
         </div>
