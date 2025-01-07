@@ -202,7 +202,7 @@ const SwipePage = () => {
             {swipedProfiles.map((profile, index) => (
               <div key={index} className="p-4 bg-gray-100 rounded-lg shadow-md">
                 <p>
-                  {profile.first_name} {profile.last_name} ({profile.age}) - Swipan {profile.direction}
+                  {profile.nickname} ({profile.first_name} {profile.last_name}) - Swipan {profile.direction === "right" ? "desno" : "levo"} <span className="timestamp">&emsp;pred {profile.swipe_time_ago}</span>
                 </p>
               </div>
             ))}

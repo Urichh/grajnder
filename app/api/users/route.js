@@ -66,14 +66,17 @@ export async function POST(request) {
 
     } else if (action === 'getswipedusers'){
       const query = `
-        SELECT id, first_name, last_name, nickname, sex, profile_pic, interests, 
-        TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age 
+        SELECT users.id, users.first_name, users.last_name, users.nickname, 
+          TIMESTAMPDIFF(YEAR, users.birth_date, CURDATE()) AS age,
+          CASE 
+            WHEN TIMESTAMPDIFF(MINUTE, swipes.swipe_date, NOW()) < 60 
+              THEN CONCAT(TIMESTAMPDIFF(MINUTE, swipes.swipe_date, NOW()), 'min')
+            ELSE CONCAT(TIMESTAMPDIFF(HOUR, swipes.swipe_date, NOW()), 'h')
+          END AS swipe_time_ago, 
+          swipes.swipe_direction AS direction
         FROM users 
-        WHERE id != ?
-          AND id IN (
-            SELECT user2 FROM swipes 
-            WHERE user1 = ?
-          )`;
+        JOIN swipes ON users.id = swipes.user2
+        WHERE users.id != ? AND swipes.user1 = ?`;
       const [rows] = await conn.execute(query, [process.env.USER_ID,process.env.USER_ID]);
 
       if (rows.length === 0) {
