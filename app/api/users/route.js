@@ -44,7 +44,7 @@ export async function POST(request) {
 
     } else if (action === 'getusers'){
       const query = `
-        SELECT id, first_name, last_name, nickname, sex, profile_pic, interests, 
+        SELECT id, first_name, last_name, nickname, sex, profile_pic, interests, game_preferences,
         TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age 
         FROM users 
         WHERE id != ?
@@ -89,8 +89,8 @@ export async function POST(request) {
         headers: { 'Content-Type': 'application/json' },
       });
 
-    } else if (action === 'getprofile'){
-      const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, birth_date FROM users WHERE id = ?`;
+        } else if (action === 'getprofile'){
+      const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, game_preferences, birth_date FROM users WHERE id = ?`;
 
       const [rows] = await conn.execute(query,[process.env.USER_ID]);
 
@@ -111,7 +111,7 @@ export async function POST(request) {
       if (rows.length === 0) {
         return new Response(JSON.stringify('Error executing query'), { status: 401 });
       }
-
+    
       await conn.end();
       return new Response(JSON.stringify(rows[0]), {
         status: 200,

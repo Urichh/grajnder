@@ -146,6 +146,7 @@ const SwipePage = () => {
                       </div>
                       <p className="text-center text-gray-600 mb-2">{profile.sex}</p>
                       <p className="text-center text-gray-600 mb-2">Preference: {profile.interests}</p>
+                      <p className="text-center text-gray-600 mb-2">Game Preference: {profile.game_prefrences}</p>
                     </div>
                   </div>
                 );
