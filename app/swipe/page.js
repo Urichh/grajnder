@@ -34,14 +34,56 @@ const SwipePage = () => {
       }
     };
     fetchUsers();
+    const fetchSwipedUsers = async () => {
+      try {
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({action: "getswipedusers"}),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setSwipedProfiles(data);
+        } 
+        else {
+          console.error('Error fetching swiped users');
+        }
+      } catch (error) {
+        console.error('Error fetching swiped users', error);
+      }
+    };
+    fetchSwipedUsers();
   }, []);
-  const handleSwipe = (direction) => {
+
+  const handleSwipe = async (direction) => {
     if (isAnimating || currentIndex >= users.length) return;
 
     const currentProfile = users[currentIndex];
     setSwipedProfiles([...swipedProfiles, { ...currentProfile, direction }]);
     setSwipeDirection(direction);
     setIsAnimating(true);
+
+    const formData = {
+      action: "swipe",
+      swiped_user: currentProfile.id,
+      direction: direction,
+    };
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+    } catch (error) {
+      console.error(error);
+      alert('An unexpected error occurred.');
+    }
 
     setTimeout(() => {
       setCurrentIndex((prevIndex) => prevIndex + 1);
@@ -160,7 +202,7 @@ const SwipePage = () => {
             {swipedProfiles.map((profile, index) => (
               <div key={index} className="p-4 bg-gray-100 rounded-lg shadow-md">
                 <p>
-                  {profile.first_name} {profile.last_name} ({profile.age}) - Swipan {profile.direction}
+                  {profile.nickname} ({profile.first_name} {profile.last_name}) - Swipan {profile.direction === "right" ? "desno" : "levo"} <span className="timestamp">&emsp;pred {profile.swipe_time_ago}</span>
                 </p>
               </div>
             ))}
