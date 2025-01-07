@@ -198,16 +198,26 @@ const SwipePage = () => {
 
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Zgodovina</h2>
-          <div className="space-y-4">
-            {swipedProfiles.map((profile, index) => (
+          <div className="space-y-4 h-64 overflow-y-auto scrollbar-hide">
+            {swipedProfiles.slice().reverse().map((profile, index) => (
               <div key={index} className="p-4 bg-gray-100 rounded-lg shadow-md">
                 <p>
-                  {profile.nickname} ({profile.first_name} {profile.last_name}) - Swipan {profile.direction === "right" ? "desno" : "levo"} <span className="timestamp">&emsp;pred {profile.swipe_time_ago}</span>
+                  {profile.nickname} ({profile.first_name} {profile.last_name}) - Swipan {profile.direction === "right" ? "desno" : "levo"} <span className="timestamp">&emsp; {profile.swipe_time_ago ? "pred":"zdaj"} {profile.swipe_time_ago}</span>
                 </p>
               </div>
             ))}
           </div>
         </div>
+
+        <style jsx>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+          }
+        `}</style>
       </div>
     </div>
   );
