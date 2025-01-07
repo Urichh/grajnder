@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 export async function POST(request) {
   try {
-    const { action, username, password, email, firstName, lastName, age, sex, updates } = await request.json();
+    const { action, username, password, email, firstName, lastName, age, sex, updates, swiped_user, direction } = await request.json();
 
     const conn = await mysql.createConnection({
       host: 'tileng.si',
@@ -43,8 +43,38 @@ export async function POST(request) {
       return new Response(JSON.stringify('Login successful'), { status: 200 });
 
     } else if (action === 'getusers'){
-      const query = `SELECT first_name, last_name, nickname, sex, profile_pic, interests, TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age FROM users WHERE id != ?`;
-      const [rows] = await conn.execute(query, [process.env.USER_ID]);
+      const query = `
+        SELECT id, first_name, last_name, nickname, sex, profile_pic, interests, 
+        TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age 
+        FROM users 
+        WHERE id != ?
+          AND id NOT IN (
+            SELECT user2 FROM swipes 
+            WHERE user1 = ?
+          )`;
+      const [rows] = await conn.execute(query, [process.env.USER_ID,process.env.USER_ID]);
+
+      if (rows.length === 0) {
+        return new Response(JSON.stringify('Error executing query'), { status: 401 });
+      }
+
+      await conn.end();
+      return new Response(JSON.stringify(rows), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+    } else if (action === 'getswipedusers'){
+      const query = `
+        SELECT id, first_name, last_name, nickname, sex, profile_pic, interests, 
+        TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age 
+        FROM users 
+        WHERE id != ?
+          AND id IN (
+            SELECT user2 FROM swipes 
+            WHERE user1 = ?
+          )`;
+      const [rows] = await conn.execute(query, [process.env.USER_ID,process.env.USER_ID]);
 
       if (rows.length === 0) {
         return new Response(JSON.stringify('Error executing query'), { status: 401 });
@@ -84,6 +114,17 @@ export async function POST(request) {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
+    } if (action === 'swipe') {
+      console.log(swiped_user);
+      
+      const query = `
+        INSERT INTO swipes (user1, user2, swipe_direction)
+        VALUES (?, ?, ?);
+      `;
+      await conn.execute(query, [process.env.USER_ID, swiped_user, direction]);
+
+      await conn.end();
+      return new Response(JSON.stringify('Swipe saved successfully'), { status: 200 });
     } else {
       await conn.end();
       return new Response(JSON.stringify('Invalid action'), { status: 400 });

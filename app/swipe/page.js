@@ -34,14 +34,56 @@ const SwipePage = () => {
       }
     };
     fetchUsers();
+    const fetchSwipedUsers = async () => {
+      try {
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({action: "getswipedusers"}),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setSwipedProfiles(data);
+        } 
+        else {
+          console.error('Error fetching swiped users');
+        }
+      } catch (error) {
+        console.error('Error fetching swiped users', error);
+      }
+    };
+    fetchSwipedUsers();
   }, []);
-  const handleSwipe = (direction) => {
+
+  const handleSwipe = async (direction) => {
     if (isAnimating || currentIndex >= users.length) return;
 
     const currentProfile = users[currentIndex];
     setSwipedProfiles([...swipedProfiles, { ...currentProfile, direction }]);
     setSwipeDirection(direction);
     setIsAnimating(true);
+
+    const formData = {
+      action: "swipe",
+      swiped_user: currentProfile.id,
+      direction: direction,
+    };
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+    } catch (error) {
+      console.error(error);
+      alert('An unexpected error occurred.');
+    }
 
     setTimeout(() => {
       setCurrentIndex((prevIndex) => prevIndex + 1);
