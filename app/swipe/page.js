@@ -20,12 +20,12 @@ const SwipePage = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({action: "getusers"}),
+          body: JSON.stringify({ action: "getusers" }),
         });
         if (response.ok) {
           const data = await response.json();
           setUsers(data);
-        } 
+        }
         else {
           console.error('Error fetching users');
         }
@@ -41,12 +41,12 @@ const SwipePage = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({action: "getswipedusers"}),
+          body: JSON.stringify({ action: "getswipedusers" }),
         });
         if (response.ok) {
           const data = await response.json();
           setSwipedProfiles(data);
-        } 
+        }
         else {
           console.error('Error fetching swiped users');
         }
@@ -75,11 +75,11 @@ const SwipePage = () => {
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-  
+
     } catch (error) {
       console.error(error);
       alert('An unexpected error occurred.');
@@ -87,7 +87,7 @@ const SwipePage = () => {
 
     setTimeout(() => {
       setCurrentIndex((prevIndex) => prevIndex + 1);
-      setIsAnimating(false)      
+      setIsAnimating(false)
       setSwipeDirection(null);
     }, 500);
   };
@@ -111,20 +111,18 @@ const SwipePage = () => {
                   <div className="relative">
                     {/* (user) kartica */}
                     <div
-                      className={`relative w-full bg-gray-100 rounded-lg p-6 shadow-md transition-all duration-500 ease-in-out ${
-                        isAnimating
-                          ? swipeDirection === 'left'
-                            ? '-translate-x-full opacity-0'
-                            : 'translate-x-full opacity-0'
-                          : 'opacity-100 translate-x-0'
-                      }`}
+                      className={`relative w-full bg-gray-100 rounded-lg p-6 shadow-md transition-all duration-500 ease-in-out ${isAnimating
+                        ? swipeDirection === 'left'
+                          ? '-translate-x-full opacity-0'
+                          : 'translate-x-full opacity-0'
+                        : 'opacity-100 translate-x-0'
+                        }`}
                     >
                       {/* simbol na kartic */}
                       {swipeDirection && (
                         <div
-                          className={`absolute inset-0 flex items-center justify-center ${
-                            swipeDirection === 'right' ? 'text-green-500' : 'text-red-500'
-                          }`}
+                          className={`absolute inset-0 flex items-center justify-center ${swipeDirection === 'right' ? 'text-green-500' : 'text-red-500'
+                            }`}
                         >
                           <span className="text-8xl font-bold">
                             {swipeDirection === 'right' ? '❤️' : '❌'} {/* please don't break anything lol */}
@@ -146,7 +144,7 @@ const SwipePage = () => {
                       </div>
                       <p className="text-center text-gray-600 mb-2">{profile.sex}</p>
                       <p className="text-center text-gray-600 mb-2">Preference: {profile.interests}</p>
-                      <p className="text-center text-gray-600 mb-2">Game Preference: {profile.game_prefrences}</p>
+                      <p className="text-center text-gray-600 mb-2">Game Preference: {profile.game_preferences}</p>
                     </div>
                   </div>
                 );
@@ -173,18 +171,16 @@ const SwipePage = () => {
             <button
               onClick={() => handleSwipe('left')}
               disabled={currentIndex >= users.length || isAnimating}
-              className={`px-6 py-2 text-white ${
-                currentIndex >= users.length ? 'bg-gray-400' : 'bg-red-600'
-              } rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`px-6 py-2 text-white ${currentIndex >= users.length ? 'bg-gray-400' : 'bg-red-600'
+                } rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             >
               Levo
             </button>
             <button
               onClick={() => handleSwipe('right')}
               disabled={currentIndex >= users.length || isAnimating}
-              className={`px-6 py-2 text-white ${
-                currentIndex >= users.length ? 'bg-gray-400' : 'bg-green-600'
-              } rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              className={`px-6 py-2 text-white ${currentIndex >= users.length ? 'bg-gray-400' : 'bg-green-600'
+                } rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             >
               Desno
             </button>
@@ -203,7 +199,7 @@ const SwipePage = () => {
             {swipedProfiles.slice().reverse().map((profile, index) => (
               <div key={index} className="p-4 bg-gray-100 rounded-lg shadow-md">
                 <p>
-                  {profile.nickname} ({profile.first_name} {profile.last_name}) - Swipan {profile.direction === "right" ? "desno" : "levo"} <span className="timestamp">&emsp; {profile.swipe_time_ago ? "pred":"zdaj"} {profile.swipe_time_ago}</span>
+                  {profile.nickname} ({profile.first_name} {profile.last_name}) - Swipan {profile.direction === "right" ? "desno" : "levo"} <span className="timestamp">&emsp; {profile.swipe_time_ago ? "pred" : "zdaj"} {profile.swipe_time_ago}</span>
                 </p>
               </div>
             ))}
