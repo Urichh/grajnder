@@ -108,9 +108,6 @@ export async function POST(request) {
 
       }
       rows.sort((a, b) => b.ranking - a.ranking);
-      rows.forEach(row => {
-        console.log(row.ranking)
-      });
       if (rows.length === 0) {
         return new Response(JSON.stringify('Error executing query'), { status: 401 });
       }
