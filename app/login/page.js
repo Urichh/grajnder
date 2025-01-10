@@ -47,7 +47,7 @@ export default function HomePage() {
 
         <div className="mb-8">
           <Image
-            src="/images/monkey.png"
+            src="/images/logo.png"
             alt="opica"
             width={200}
             height={200}
