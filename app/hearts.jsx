@@ -10,7 +10,7 @@ const Hearts = () => {
     for (let i = 0; i < 45; i++) {
       const heart = document.createElement('div');
       heart.classList.add('heart');
-      heart.textContent = '❤️';
+      heart.textContent = '🎮'; //ni dating app - bojo kontrolerji
 
       //random velikost 
       const size = Math.random() * 20 + 10;

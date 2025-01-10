@@ -11,6 +11,7 @@ const SwipePage = () => {
   const [users, setUsers] = useState([]); //uporabniki
   const [swipeDirection, setSwipeDirection] = useState(null); //stran swipe-a (left/right)
   const [isAnimating, setIsAnimating] = useState(false); //status animacije za transformacijo in fade-in + ikonca
+  const [showMatchEmoji, setShowMatchEmoji] = useState(false); //dont even lol
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -48,10 +49,10 @@ const SwipePage = () => {
           setSwipedProfiles(data);
         }
         else {
-          console.error('Error fetching swiped users');
+          //console.error('Error fetching swiped users'); - loh zajebava na first run
         }
       } catch (error) {
-        console.error('Error fetching swiped users', error);
+        //console.error('Error fetching swiped users', error); - also loh zajebava na first run
       }
     };
     fetchSwipedUsers();
@@ -80,6 +81,12 @@ const SwipePage = () => {
         body: JSON.stringify(formData),
       });
 
+      var temp = await response.json()
+      if (temp === 'match'){
+        console.log("wohoo")
+        setShowMatchEmoji(true);
+      }
+
     } catch (error) {
       console.error(error);
       alert('An unexpected error occurred.');
@@ -97,12 +104,60 @@ const SwipePage = () => {
   };
 
   const profile = users[currentIndex];
+return(
+  <div>
+    {/* Notification za zaznan match */}
+    {showMatchEmoji && (
+      <div
+        className="fixed inset-0 flex flex-col items-center justify-center bg-black/50"
+        style={{ zIndex: 1000 }}
+      >
+        <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
+          <div
+            className="text-4xl font-bold text-gray-800 mb-4"
+            style={{
+              fontSize: '3rem',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+            }}
+          >
+            Zaznan match!
+          </div>
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+          <span
+            role="img"
+            aria-label="match"
+            style={{
+              fontSize: '12rem',
+              textShadow: '2px 2px 8px rgba(0, 0, 0, 0.7)',
+              marginBottom: '1rem',
+            }}
+          >
+            🎉
+          </span>
+
+          <div
+            className="text-4xl font-bold text-gray-800 mb-4"
+            style={{
+              fontSize: '3rem',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+            }}
+          >
+            { users[currentIndex-1].first_name + " " +  users[currentIndex-1].last_name + " (" + users[currentIndex-1].nickname + ")"}
+          </div>
+
+          <button
+            onClick={() => setShowMatchEmoji(false)}
+            className="mt-8 px-6 py-2 text-lg text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            Zapri
+          </button>
+        </div>
+      </div>
+    )}
+    { console.log(profile) }
+     <div className="relative">
       <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg">
         <h1 className="text-3xl font-semibold text-center mb-8">Swipaj profile</h1>
-
         <div className="flex flex-col items-center mb-8">
           {(() => {
             if (currentIndex < users.length) {
@@ -136,7 +191,7 @@ const SwipePage = () => {
                       <div>
                         <Image
                           src={"/images/" + profile.profile_pic}
-                          alt="uga buga"
+                          alt="user nima slike"
                           width={200}
                           height={200}
                           className="mx-auto mb-6"
@@ -157,7 +212,7 @@ const SwipePage = () => {
                   <div className="mt-6 flex justify-center">
                     <Image
                       src="/images/monkey.png"
-                      alt="uga buga"
+                      alt="user nima slike"
                       width={200}
                       height={200}
                       className="mx-auto mb-6"
@@ -214,9 +269,25 @@ const SwipePage = () => {
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
           }
+          @keyframes fade-out {
+            0% {
+              opacity: 1;
+              transform: scale(1);
+            }
+            100% {
+              opacity: 0;
+              transform: scale(1.5);
+            }
+          }
+
+          .animate-fade-out {
+            animation: fade-out 5s ease forwards;
+          }
         `}</style>
+      
       </div>
     </div>
+  </div>
   );
 };
 

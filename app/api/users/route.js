@@ -120,7 +120,7 @@ export async function POST(request) {
 
     } else if (action === 'getswipedusers') {
       const query = `
-        SELECT users.id, users.first_name, users.last_name, users.nickname, 
+        SELECT users.id, users.first_name, users.last_name, users.nickname, users.profile_pic, 
           TIMESTAMPDIFF(YEAR, users.birth_date, CURDATE()) AS age,
           CASE 
             WHEN TIMESTAMPDIFF(MINUTE, swipes.swipe_date, NOW()) < 60 
@@ -186,10 +186,33 @@ export async function POST(request) {
         INSERT INTO swipes (user1, user2, swipe_direction)
         VALUES (?, ?, ?);
       `;
+       
+      const query2 = `
+        SELECT user1, swipe_direction FROM swipes
+        WHERE user2 = ? AND user1 = ?
+      `;
+      var [odgovor] = await conn.execute(query2, [process.env.USER_ID, swiped_user])
       await conn.execute(query, [process.env.USER_ID, swiped_user, direction]);
 
       await conn.end();
-      return new Response(JSON.stringify('Swipe saved successfully'), { status: 200 });
+      //moj shit za hit detection
+      if(odgovor.length === 0) {
+        console.log("ni matcha")
+        return new Response(JSON.stringify('ni matchaaa'), { status: 200 });
+      }
+      else {
+        if(direction === 'right'){
+          //zaznan match
+          console.log("match zaznan")
+          console.log(odgovor[0])
+          return new Response(JSON.stringify('match'), { status: 200 });
+        }
+        else{
+          return new Response(JSON.stringify('ni matchaa'), { status: 200 });
+        }
+      }
+
+      
     } else {
       await conn.end();
       return new Response(JSON.stringify('Invalid action'), { status: 400 });

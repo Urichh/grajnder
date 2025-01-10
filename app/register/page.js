@@ -33,7 +33,7 @@ export default function HomePage() {
       });
 
       if (response.ok) {
-        alert('User registered successfully!');
+        //alert('User registered successfully!'); se mi zdi mal pointless tbh
         router.push('/login');
       } else {
         const data = await response.json();
